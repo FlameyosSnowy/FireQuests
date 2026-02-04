@@ -1,0 +1,6 @@
+name: TrialForDevRoom
+version: '1.0.0'
+main: me.flame.quests.spigot.TrialForDevRoom
+api-version: '1.21'
+authors: [ FlameyosSnowy ]
+website: https://github.com/FlameyosSnowy
