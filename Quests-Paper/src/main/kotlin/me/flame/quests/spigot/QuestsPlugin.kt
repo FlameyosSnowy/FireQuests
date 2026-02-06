@@ -1,6 +1,7 @@
 package me.flame.quests.spigot
 
 import hazae41.minecraft.kutils.bukkit.info
+import io.github.mqzen.menus.Lotus
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,8 +57,10 @@ class QuestsPlugin : JavaPlugin(), CoroutineScope {
         val imperat = BukkitImperat.builder(this)
             .build()
 
+        val lotus = Lotus.load(this)
+
         imperat.registerCommand(QuestsAdminCommand())
-        imperat.registerCommand(QuestsCommand(this))
+        imperat.registerCommand(QuestsCommand(this, lotus))
 
         server.pluginManager.registerEvents(PlayerConnectionStateListener(questsManager), this)
         server.pluginManager.registerEvents(EntityDeathListener(questEventRouter, questsManager, this), this)
