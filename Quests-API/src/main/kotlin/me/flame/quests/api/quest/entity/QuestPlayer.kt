@@ -1,6 +1,6 @@
 package me.flame.quests.api.quest.entity
 
-import me.flame.quests.api.quest.QuestProgress
+import me.flame.quests.api.quest.progress.QuestProgress
 import java.util.UUID
 
 interface QuestPlayer {
