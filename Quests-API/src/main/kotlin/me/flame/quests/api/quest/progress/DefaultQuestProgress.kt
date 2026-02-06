@@ -1,8 +1,11 @@
-package me.flame.quests.api.quest
+package me.flame.quests.api.quest.progress
+
+import me.flame.quests.api.quest.progress.QuestProgress
 
 /**
  * Default implementation of QuestProgress
  */
+@JvmRecord
 data class DefaultQuestProgress(
     private val progressMap: MutableMap<String, Int> = mutableMapOf()
 ) : QuestProgress {
@@ -35,8 +38,8 @@ data class DefaultQuestProgress(
      * @param empty The character for empty portions (default □)
      */
     fun display(
-        key: String, 
-        max: Int, 
+        key: String,
+        max: Int,
         length: Int = 10,
         filled: Char = '■',
         empty: Char = '□'
@@ -45,7 +48,7 @@ data class DefaultQuestProgress(
         val percentage = if (max > 0) current.toDouble() / max else 0.0
         val filledCount = (percentage * length).toInt().coerceIn(0, length)
         val emptyCount = length - filledCount
-        
+
         return buildString {
             repeat(filledCount) { append(filled) }
             repeat(emptyCount) { append(empty) }
@@ -72,9 +75,6 @@ data class DefaultQuestProgress(
     }
 
     companion object {
-        /**
-         * Create from a snapshot map
-         */
         fun fromSnapshot(snapshot: Map<String, Int>): DefaultQuestProgress {
             return DefaultQuestProgress(snapshot.toMutableMap())
         }

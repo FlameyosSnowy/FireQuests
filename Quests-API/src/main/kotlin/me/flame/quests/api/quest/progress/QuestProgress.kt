@@ -1,4 +1,4 @@
-package me.flame.quests.api.quest
+package me.flame.quests.api.quest.progress
 
 interface QuestProgress {
 
