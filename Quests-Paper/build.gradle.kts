@@ -10,10 +10,14 @@ dependencies {
 
     implementation("com.github.Hazae41:Kotlin4MC:3.3.3")
     implementation("studio.mevera:imperat-core:2.4.2")
+    implementation("studio.mevera:imperat-bukkit:2.4.2")
+    implementation("net.kyori:adventure-text-minimessage:4.26.1")
 
     implementation(project(":Quests-API"))
 
     implementation("com.github.Mqzn:Lotus:1.6.0")
+
+    compileOnly("com.github.placeholderapi:placeholderapi:2.11.6")
 }
 
 tasks {
