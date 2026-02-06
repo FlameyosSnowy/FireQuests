@@ -1,10 +1,11 @@
 package me.flame.quests.api.database.mongodb
 
-import me.flame.quests.api.quest.DefaultQuestProgress
-import me.flame.quests.api.quest.QuestProgress
+import me.flame.quests.api.quest.progress.DefaultQuestProgress
+import me.flame.quests.api.quest.progress.QuestProgress
 import me.flame.quests.api.quest.entity.QuestPlayer
 import java.util.UUID
 
+@JvmRecord
 data class MongoQuestPlayer(
     val _id: UUID,
     override val name: String,

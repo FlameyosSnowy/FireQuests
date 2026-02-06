@@ -1,8 +1,11 @@
 package me.flame.quests.api.database.mongodb
 
+import com.mongodb.ConnectionString
+import com.mongodb.MongoClientSettings
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.mongodb.kotlin.client.coroutine.MongoCollection
+import com.mongodb.kotlin.client.coroutine.MongoDatabase
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
@@ -10,17 +13,31 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import me.flame.quests.api.database.QuestPlayerDatabase
 import me.flame.quests.api.quest.entity.QuestPlayer
+import org.bson.UuidRepresentation
 
 import java.util.UUID
 
-class MongoQuestPlayerDatabase(
-    client: MongoClient,
-    databaseName: String = "quests"
+class MongoQuestPlayerDatabase private constructor(
+    private val database: MongoDatabase
 ) : QuestPlayerDatabase {
+    constructor(
+        client: MongoClient,
+        databaseName: String = "quests"
+    ) : this(
+        database = client.getDatabase(databaseName)
+    )
+
+    constructor(credentials: MongoCredentials) : this(
+        database = MongoClient.create(
+            MongoClientSettings.builder()
+                .applyConnectionString(ConnectionString(credentials.connectionString))
+                .uuidRepresentation(UuidRepresentation.STANDARD)
+                .build()
+        ).getDatabase(credentials.databaseName)
+    )
 
     private val collection: MongoCollection<MongoQuestPlayer> =
-        client.getDatabase(databaseName)
-            .getCollection("quest_players")
+        database.getCollection("quest_players")
 
     override suspend fun findById(id: UUID): Result<QuestPlayer?> = runCatching {
         withContext(Dispatchers.IO) {
@@ -55,6 +72,7 @@ class MongoQuestPlayerDatabase(
         this as? MongoQuestPlayer
             ?: MongoQuestPlayer(
                 _id = this.id,
+                name = this.name,
                 progress = this.progress,
                 completedQuests = this.completedQuests
             )

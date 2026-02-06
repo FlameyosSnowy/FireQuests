@@ -14,34 +14,25 @@ import org.bson.UuidRepresentation
 import java.util.UUID
 
 class MongoQuestDatabase private constructor(
-    private val client: MongoClient,
     private val database: MongoDatabase
 ) : QuestDatabase {
+    constructor(
+        client: MongoClient,
+        databaseName: String = "quests"
+    ) : this(
+        database = client.getDatabase(databaseName)
+    )
 
     private val quests: MongoCollection<Quest> =
         database.getCollection("quests")
 
     constructor(credentials: MongoCredentials) : this(
-        client = MongoClient.create(
-            MongoClientSettings.builder()
-                .applyConnectionString(ConnectionString(credentials.connectionString))
-                .uuidRepresentation(UuidRepresentation.STANDARD)
-                .build()
-        ),
         database = MongoClient.create(
             MongoClientSettings.builder()
                 .applyConnectionString(ConnectionString(credentials.connectionString))
                 .uuidRepresentation(UuidRepresentation.STANDARD)
                 .build()
-        ).getDatabase("quests")
-    )
-
-    constructor(
-        client: MongoClient,
-        databaseName: String = "quests"
-    ) : this(
-        client = client,
-        database = client.getDatabase(databaseName)
+        ).getDatabase(credentials.databaseName)
     )
 
     override suspend fun fetchQuests(): List<Quest> =

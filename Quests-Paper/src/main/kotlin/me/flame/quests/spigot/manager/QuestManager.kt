@@ -6,12 +6,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.flame.quests.api.database.QuestPlayerDatabase
-import me.flame.quests.api.database.QuestProgressDatabase
 import me.flame.quests.api.database.QuestStore
 import me.flame.quests.api.database.mongodb.MongoQuestPlayer
-import me.flame.quests.api.quest.DefaultQuestProgress
+import me.flame.quests.api.quest.progress.DefaultQuestProgress
 import me.flame.quests.api.quest.Quest
-import me.flame.quests.api.quest.QuestProgress
+import me.flame.quests.api.quest.progress.QuestProgress
 import me.flame.quests.api.quest.entity.QuestPlayer
 import me.flame.quests.spigot.config.QuestConfig
 import me.flame.quests.spigot.config.QuestSection
@@ -25,7 +24,6 @@ class QuestManager(
     private val plugin: JavaPlugin,
     private val config: QuestConfig,
     private val playerDatabase: QuestPlayerDatabase,
-    private val progressDatabase: QuestProgressDatabase,
     private val questStore: QuestStore
 ) {
 
@@ -139,7 +137,7 @@ class QuestManager(
                     progressCache.entries
                         .filter { it.key.first == player.uniqueId }
                         .forEach { (key, progress) ->
-                            progressDatabase.saveProgress(key.first, key.second, progress)
+                            getQuestPlayer(key.first)?.let { questStore.saveProgress(it, key.second, progress) }
                             progressCache.remove(key)
                         }
 
@@ -290,7 +288,7 @@ class QuestManager(
             // Save all progress
             progressCache.forEach { (key, progress) ->
                 try {
-                    progressDatabase.saveProgress(key.first, key.second, progress)
+                    getQuestPlayer(key.first)?.let { questStore.saveProgress(it, key.second, progress) }
                 } catch (e: Exception) {
                     logger.severe("Error saving progress: ${e.message}")
                 }
@@ -313,7 +311,7 @@ class QuestManager(
             mongoProgressDb: QuestProgressDatabase,
             mongoStore: QuestStore
         ): QuestManager {
-            return QuestManager(plugin, config, mongoPlayerDb, mongoProgressDb, mongoStore)
+            return QuestManager(plugin, config, mongoPlayerDb, mongoStore)
         }
     }
 }
