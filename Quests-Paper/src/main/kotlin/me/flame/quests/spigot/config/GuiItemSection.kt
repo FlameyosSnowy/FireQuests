@@ -1,18 +1,21 @@
 package me.flame.quests.spigot.config
 
-import hazae41.minecraft.kutils.bukkit.Config
 import io.github.mqzen.menus.misc.itembuilder.ComponentItemBuilder
+
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.CustomModelData
+import me.flame.quests.api.GuiItemSpec
+
 import me.flame.quests.spigot.hooks.parsePapi
+import me.flame.quests.spigot.minimessage.color
+
 import net.kyori.adventure.text.minimessage.MiniMessage
+
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-
-val SERIALIZER: MiniMessage = MiniMessage.miniMessage();
 
 class GuiItemSection(
     override var config: ConfigurationSection
@@ -25,8 +28,8 @@ class GuiItemSection(
 
     fun buildItemStack(player: Player): ItemStack {
         val build = ComponentItemBuilder.modern(Material.valueOf(material))
-            .setDisplay(SERIALIZER.deserialize(parsePapi(player, name)))
-            .setLore(lore.map { SERIALIZER.deserialize(parsePapi(player, it)) })
+            .setDisplay(color(parsePapi(player, name)))
+            .setLore(lore.map { color(parsePapi(player, it)) })
             .addFlags(*flags.map { ItemFlag.valueOf(it) }.toTypedArray())
             .build()
 
@@ -36,5 +39,15 @@ class GuiItemSection(
 
         build.setData(DataComponentTypes.CUSTOM_MODEL_DATA, custom)
         return build
+    }
+
+    fun buildGuiItemSpec(): GuiItemSpec {
+        return GuiItemSpec(
+            material = material,
+            name = name,
+            lore = lore,
+            flags = flags,
+            customModelData = customModelData.takeIf { it > 0 }
+        )
     }
 }

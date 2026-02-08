@@ -1,30 +1,27 @@
 package me.flame.quests.spigot.config
 
-import hazae41.minecraft.kutils.bukkit.ConfigFile
-import hazae41.minecraft.kutils.bukkit.sections
-import org.bukkit.configuration.ConfigurationSection
-import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
+// I had to do this because I don't want to use hazae41's config system
+// hazae41's config system doesn't give you the ability to reload, lmao
 class QuestConfig(plugin: JavaPlugin) :
     ConfigFile(File(plugin.dataFolder, "config.yml")) {
 
+    init {
+        reload()
+    }
+
     var debug by boolean("debug")
 
-    val quests: Map<ConfigurationSection?, QuestSection>
+    val quests: Map<String, QuestSection>
         get() {
             val root = config.getConfigurationSection("quests") ?: return emptyMap()
-            return root.sections.associateWith { key ->
-                QuestSection(key!!)
+            return root.getKeys(false).associateWith { key ->
+                QuestSection(root.getConfigurationSection(key)!!)
             }
         }
 
     val database: DatabaseSection?
         get() = config.getConfigurationSection("database")?.let { DatabaseSection(it) }
-
-    fun reload() {
-        // calls BukkitConfiguration.loadConfiguration(file) which reloads the configuration
-        config
-    }
 }

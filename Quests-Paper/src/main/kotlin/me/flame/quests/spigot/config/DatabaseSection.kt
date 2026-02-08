@@ -1,6 +1,5 @@
 package me.flame.quests.spigot.config
 
-import hazae41.minecraft.kutils.bukkit.Config
 import org.bukkit.configuration.ConfigurationSection
 
 class DatabaseSection(
