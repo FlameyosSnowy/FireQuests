@@ -5,7 +5,7 @@ import java.util.UUID
 import java.util.function.Predicate
 
 class QuestSubscription(
-    val questId: UUID,
+    val questId: String,
     val filter: Predicate<QuestEventContext>,
     val changer: ProgressChanger
 ) {

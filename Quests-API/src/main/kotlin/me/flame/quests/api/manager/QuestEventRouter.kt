@@ -1,20 +1,14 @@
 package me.flame.quests.api.manager
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import me.flame.quests.api.quest.QuestEventContext
 import me.flame.quests.api.quest.QuestEventType
 import me.flame.quests.api.quest.QuestSubscription
-import me.flame.quests.api.quest.entity.QuestPlayer
+
 import java.util.*
 
 class QuestEventRouter(val routes: MutableMap<QuestEventType, MutableList<QuestSubscription>> =
-                           EnumMap<QuestEventType, MutableList<QuestSubscription>>(QuestEventType::class.java),
-                       parentScope: CoroutineScope) {
-    private val scope = CoroutineScope(
-        parentScope.coroutineContext + SupervisorJob()
-    )
+                           Collections.synchronizedMap(EnumMap<QuestEventType, MutableList<QuestSubscription>>(QuestEventType::class.java))
+) {
 
     fun register(type: QuestEventType, subscription: QuestSubscription) {
         routes.computeIfAbsent(type) { k: QuestEventType? -> ArrayList<QuestSubscription>() }.add(subscription)

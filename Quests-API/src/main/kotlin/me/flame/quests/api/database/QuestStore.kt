@@ -7,22 +7,27 @@ import java.util.UUID
 interface QuestStore {
     suspend fun getProgress(
         player: QuestPlayer,
-        questId: UUID
-    ): QuestProgress
+        questId: String
+    ): QuestProgress?
 
     suspend fun saveProgress(
         player: QuestPlayer,
-        questId: UUID,
+        questId: String,
         progress: QuestProgress
     )
 
     suspend fun completeQuest(
         player: QuestPlayer,
-        questId: UUID
+        questId: String
     )
 
     suspend fun isCompleted(
         player: QuestPlayer,
-        questId: UUID
+        questId: String
+    ): Boolean
+
+    suspend fun completeQuestOnce(
+        player: QuestPlayer,
+        questId: String
     ): Boolean
 }

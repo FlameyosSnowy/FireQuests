@@ -1,12 +1,14 @@
 package me.flame.quests.api.quest
 
-import java.util.UUID
+import me.flame.quests.api.GuiItemSpec
 
 data class Quest(
-    val id: UUID,
+    val id: String,
     val type: String,
     val target: String,
     val requiredAmount: Int,
-    val rewardCommand: String?,
-    val rewardItems: List<*>
+    val rewards: List<QuestReward>,
+    val displayItem: GuiItemSpec,
+    val parentId: String? = null,
+    val children: MutableList<Quest> = mutableListOf()
 )

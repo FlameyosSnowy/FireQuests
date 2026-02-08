@@ -15,17 +15,10 @@ import me.flame.quests.api.quest.progress.QuestProgress
 import me.flame.quests.api.quest.QuestProgressEntry
 import me.flame.quests.api.quest.entity.QuestPlayer
 import org.bson.UuidRepresentation
-import java.util.UUID
 
 class MongoQuestStore private constructor(
-    private val database: MongoDatabase
+    database: MongoDatabase
 ) : QuestStore {
-
-    constructor(
-        client: MongoClient,
-        databaseName: String = "quests"
-    ) : this(client.getDatabase(databaseName))
-
     constructor(credentials: MongoCredentials) : this(
         MongoClient.create(
             MongoClientSettings.builder()
@@ -40,12 +33,12 @@ class MongoQuestStore private constructor(
 
     override suspend fun getProgress(
         player: QuestPlayer,
-        questId: UUID
+        questId: String
     ): QuestProgress? = progressCollection.find(and(eq("playerId", player.id), eq("questId", questId))).firstOrNull()?.progress
 
     override suspend fun saveProgress(
         player: QuestPlayer,
-        questId: UUID,
+        questId: String,
         progress: QuestProgress
     ) {
         progressCollection.updateOne(
@@ -60,7 +53,7 @@ class MongoQuestStore private constructor(
 
     override suspend fun completeQuest(
         player: QuestPlayer,
-        questId: UUID
+        questId: String
     ) {
         progressCollection.updateOne(
             and(eq("playerId", player.id), eq("questId", questId)),
@@ -69,9 +62,28 @@ class MongoQuestStore private constructor(
         )
     }
 
+    override suspend fun completeQuestOnce(
+        player: QuestPlayer,
+        questId: String
+    ): Boolean {
+        val filter = and(
+            eq("playerId", player.id),
+            eq("questId", questId),
+            eq("completed", false)
+        )
+
+        val updateResult = progressCollection.updateOne(
+            filter,
+            set("completed", true),
+            UpdateOptions().upsert(true)
+        )
+
+        return updateResult.matchedCount > 0 || updateResult.upsertedId != null
+    }
+
     override suspend fun isCompleted(
         player: QuestPlayer,
-        questId: UUID
+        questId: String
     ): Boolean =
         progressCollection.find(
             and(

@@ -1,82 +1,38 @@
 package me.flame.quests.api.quest.progress
 
-import me.flame.quests.api.quest.progress.QuestProgress
+import me.flame.quests.api.quest.QuestKey
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Default implementation of QuestProgress
  */
-@JvmRecord
-data class DefaultQuestProgress(
-    private val progressMap: MutableMap<String, Int> = mutableMapOf()
+class DefaultQuestProgress(
+    private val numbers: MutableMap<String, Int> = ConcurrentHashMap(),
+    private val sets: MutableMap<String, MutableSet<QuestKey>> = ConcurrentHashMap()
 ) : QuestProgress {
 
-    override fun increment(key: String, amount: Int): Int {
-        val current = progressMap.getOrDefault(key, 0)
-        val newValue = current + amount
-        progressMap[key] = newValue
-        return newValue
-    }
-
-    override fun get(key: String): Int {
-        return progressMap.getOrDefault(key, 0)
-    }
+    override fun get(key: String): Int = numbers[key] ?: 0
 
     override fun set(key: String, value: Int) {
-        progressMap[key] = value
+        numbers[key] = value
     }
 
-    override fun snapshot(): Map<String, Int> {
-        return progressMap.toMap()
+    override fun increment(key: String, amount: Int) {
+        numbers[key] = get(key) + amount
     }
 
-    /**
-     * Display progress as a visual bar
-     * @param key The progress key
-     * @param max The maximum value (required amount)
-     * @param length The length of the bar (default 10)
-     * @param filled The character for filled portions (default ■)
-     * @param empty The character for empty portions (default □)
-     */
-    fun display(
-        key: String,
-        max: Int,
-        length: Int = 10,
-        filled: Char = '■',
-        empty: Char = '□'
-    ): String {
-        val current = get(key)
-        val percentage = if (max > 0) current.toDouble() / max else 0.0
-        val filledCount = (percentage * length).toInt().coerceIn(0, length)
-        val emptyCount = length - filledCount
+    override fun getSet(key: String): MutableSet<QuestKey> =
+        sets.computeIfAbsent(key) { mutableSetOf() }
 
-        return buildString {
-            repeat(filledCount) { append(filled) }
-            repeat(emptyCount) { append(empty) }
-        }
-    }
-
-    /**
-     * Display progress with count
-     * Example: "■■■□□ 3/5"
-     */
-    fun displayWithCount(
-        key: String,
-        max: Int,
-        length: Int = 10,
-        filled: Char = '■',
-        empty: Char = '□'
-    ): String {
-        val current = get(key)
-        return "${display(key, max, length, filled, empty)} $current/$max"
-    }
-
-    fun copy(): DefaultQuestProgress {
-        return DefaultQuestProgress(progressMap.toMutableMap())
+    override fun addToSet(key: String, value: QuestKey) {
+        sets.computeIfAbsent(key) { mutableSetOf() }.add(value)
     }
 
     companion object {
         fun fromSnapshot(snapshot: Map<String, Int>): DefaultQuestProgress {
-            return DefaultQuestProgress(snapshot.toMutableMap())
+            val progress = DefaultQuestProgress()
+            snapshot.forEach { (k, v) -> progress.set(k, v) }
+            return progress
         }
     }
 }
