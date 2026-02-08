@@ -25,6 +25,7 @@ import me.flame.quests.api.quest.progress.ProgressChanger
 
 import me.flame.quests.spigot.commands.QuestsAdminCommand
 import me.flame.quests.spigot.commands.QuestsCommand
+import me.flame.quests.spigot.config.MongoDatabaseConfig
 import me.flame.quests.spigot.config.QuestConfig
 import me.flame.quests.spigot.config.QuestSection
 import me.flame.quests.spigot.hooks.initHooks
@@ -55,12 +56,14 @@ class QuestsPlugin : JavaPlugin(), CoroutineScope {
         )
 
         val database = bukkitConfig.database ?: error("No database configured")
-        val (playerDatabase, questStore) = when (database.type.lowercase()) {
-            "mongodb" -> {
-                val creds = MongoCredentials(database.connectionString, database.databaseName)
+
+        val dbConfig = database.load()
+
+        val (playerDatabase, questStore) = when (dbConfig) {
+            is MongoDatabaseConfig -> {
+                val creds = MongoCredentials(dbConfig.connectionString, dbConfig.databaseName)
                 MongoQuestPlayerDatabase(creds) to MongoQuestStore(creds)
             }
-            else -> error("Unsupported database type: ${database.type}")
         }
 
         val commandExecutor = BukkitCommandRewardExecutor()

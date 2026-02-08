@@ -6,7 +6,6 @@ import me.flame.quests.api.quest.Quest
 import me.flame.quests.api.quest.QuestReward
 import org.bukkit.configuration.ConfigurationSection
 import kotlin.collections.get
-import kotlin.text.get
 
 class QuestSection(
     override var config: ConfigurationSection
@@ -15,7 +14,7 @@ class QuestSection(
     val id by string("id")
     val type by string("type")
     val target by string("target")
-    val requiredAmount by int("required-amount")
+    val requiredAmount by int("required-amount", def = 1)
 
     // Optional parent quest
     val parentId by string("parent-id", def = "")
