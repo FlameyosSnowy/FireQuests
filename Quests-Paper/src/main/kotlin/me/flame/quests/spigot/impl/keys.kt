@@ -3,7 +3,6 @@ package me.flame.quests.spigot.impl
 import me.flame.quests.api.quest.QuestKey
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
-import org.bukkit.block.BlockType
 import org.bukkit.entity.EntityType
 
 fun fromEntity(entity: EntityType): QuestKey {

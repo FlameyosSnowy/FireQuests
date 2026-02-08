@@ -6,10 +6,9 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * Default implementation of QuestProgress
  */
-class DefaultQuestProgress(
-    private val numbers: MutableMap<String, Int> = ConcurrentHashMap(),
-    private val sets: MutableMap<String, MutableSet<QuestKey>> = ConcurrentHashMap()
-) : QuestProgress {
+class DefaultQuestProgress : QuestProgress {
+    var numbers: MutableMap<String, Int> = ConcurrentHashMap()
+    var sets: MutableMap<String, MutableSet<QuestKey>> = ConcurrentHashMap()
 
     override fun get(key: String): Int = numbers[key] ?: 0
 
@@ -26,13 +25,5 @@ class DefaultQuestProgress(
 
     override fun addToSet(key: String, value: QuestKey) {
         sets.computeIfAbsent(key) { mutableSetOf() }.add(value)
-    }
-
-    companion object {
-        fun fromSnapshot(snapshot: Map<String, Int>): DefaultQuestProgress {
-            val progress = DefaultQuestProgress()
-            snapshot.forEach { (k, v) -> progress.set(k, v) }
-            return progress
-        }
     }
 }

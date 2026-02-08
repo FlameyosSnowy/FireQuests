@@ -1,7 +1,6 @@
 package me.flame.quests.api.quest
 
 import me.flame.quests.api.quest.progress.ProgressChanger
-import java.util.UUID
 import java.util.function.Predicate
 
 class QuestSubscription(

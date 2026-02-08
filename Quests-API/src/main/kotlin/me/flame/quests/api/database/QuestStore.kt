@@ -2,7 +2,6 @@ package me.flame.quests.api.database
 
 import me.flame.quests.api.quest.progress.QuestProgress
 import me.flame.quests.api.quest.entity.QuestPlayer
-import java.util.UUID
 
 interface QuestStore {
     suspend fun getProgress(

@@ -1,7 +1,6 @@
 package me.flame.quests.spigot
 
 import me.flame.quests.spigot.listeners.MovementAndExplorationListener
-import hazae41.minecraft.kutils.bukkit.info
 
 import io.github.mqzen.menus.Lotus
 
@@ -100,7 +99,7 @@ class QuestsPlugin : JavaPlugin(), CoroutineScope {
         server.pluginManager.registerEvents(BlockMineListener(questEventRouter, questsManager, this), this)
         server.pluginManager.registerEvents(MovementAndExplorationListener(questEventRouter, questsManager, this), this)
 
-        info("Quests Plugin Enabled")
+        logger.info("Quests Plugin Enabled")
     }
 
     override fun onDisable() {
@@ -108,7 +107,7 @@ class QuestsPlugin : JavaPlugin(), CoroutineScope {
             withContext(Dispatchers.IO) {
                 questsManager.unloadAllPlayers()
                 job.cancel()
-                info("Quests Plugin Disabled")
+                logger.info("Quests Plugin Disabled")
             }
         }
     }

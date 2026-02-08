@@ -1,3 +1,5 @@
+@file:Suppress("SameParameterValue")
+
 package me.flame.quests.spigot.config
 
 import org.bukkit.configuration.ConfigurationSection

@@ -2,9 +2,9 @@
 
 package me.flame.quests.spigot.config
 
-import hazae41.minecraft.kutils.bukkit.BukkitConfiguration
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import kotlin.reflect.KProperty
 
@@ -85,7 +85,7 @@ open class ConfigFile(
             ?: error("Config not loaded. Call ConfigFile.reload() first.")
 
     open fun reload() {
-        val loaded = BukkitConfiguration.loadConfiguration(file)
+        val loaded = YamlConfiguration.loadConfiguration(file)
 
         _config = loaded
     }

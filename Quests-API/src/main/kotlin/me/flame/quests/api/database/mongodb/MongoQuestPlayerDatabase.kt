@@ -2,14 +2,12 @@ package me.flame.quests.api.database.mongodb
 
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
+import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
-import com.mongodb.kotlin.client.coroutine.MongoClient
-import com.mongodb.kotlin.client.coroutine.MongoCollection
-import com.mongodb.kotlin.client.coroutine.MongoDatabase
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import me.flame.quests.api.database.QuestPlayerDatabase
 import me.flame.quests.api.quest.entity.QuestPlayer
@@ -20,15 +18,8 @@ import java.util.UUID
 class MongoQuestPlayerDatabase private constructor(
     private val database: MongoDatabase
 ) : QuestPlayerDatabase {
-    constructor(
-        client: MongoClient,
-        databaseName: String = "quests"
-    ) : this(
-        database = client.getDatabase(databaseName)
-    )
-
     constructor(credentials: MongoCredentials) : this(
-        database = MongoClient.create(
+        database = MongoClients.create(
             MongoClientSettings.builder()
                 .applyConnectionString(ConnectionString(credentials.connectionString))
                 .uuidRepresentation(UuidRepresentation.STANDARD)
@@ -37,7 +28,7 @@ class MongoQuestPlayerDatabase private constructor(
     )
 
     private val collection: MongoCollection<MongoQuestPlayer> =
-        database.getCollection("quest_players")
+        database.getCollection("quest_players", MongoQuestPlayer::class.java)
 
     override suspend fun findById(id: UUID): Result<QuestPlayer?> = runCatching {
         withContext(Dispatchers.IO) {

@@ -2,14 +2,13 @@ package me.flame.quests.api.database.mongodb
 
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
+import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.Updates.set
-import com.mongodb.kotlin.client.coroutine.MongoClient
-import com.mongodb.kotlin.client.coroutine.MongoCollection
-import com.mongodb.kotlin.client.coroutine.MongoDatabase
-import kotlinx.coroutines.flow.firstOrNull
 import me.flame.quests.api.database.QuestStore
 import me.flame.quests.api.quest.progress.QuestProgress
 import me.flame.quests.api.quest.QuestProgressEntry
@@ -20,7 +19,7 @@ class MongoQuestStore private constructor(
     database: MongoDatabase
 ) : QuestStore {
     constructor(credentials: MongoCredentials) : this(
-        MongoClient.create(
+        MongoClients.create(
             MongoClientSettings.builder()
                 .applyConnectionString(ConnectionString(credentials.connectionString))
                 .uuidRepresentation(UuidRepresentation.STANDARD)
@@ -29,7 +28,7 @@ class MongoQuestStore private constructor(
     )
 
     private val progressCollection: MongoCollection<QuestProgressEntry> =
-        database.getCollection("quest_progress")
+        database.getCollection("quest_progress", QuestProgressEntry::class.java)
 
     override suspend fun getProgress(
         player: QuestPlayer,

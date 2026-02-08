@@ -1,23 +1,25 @@
 plugins {
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    kotlin("jvm") version "2.3.0"
 }
 
 group = "me.flame.quests"
 version = "1.0.0"
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
-
-    implementation("com.github.Hazae41:Kotlin4MC:3.3.3")
     implementation("studio.mevera:imperat-core:2.4.2")
     implementation("studio.mevera:imperat-bukkit:2.4.2")
-    implementation("net.kyori:adventure-text-minimessage:4.26.1")
 
     implementation(project(":Quests-API"))
 
     implementation("com.github.Mqzn:Lotus:1.6.0")
 
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2")
+
     compileOnly("com.github.placeholderapi:placeholderapi:2.11.6")
+
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 }
 
 tasks {

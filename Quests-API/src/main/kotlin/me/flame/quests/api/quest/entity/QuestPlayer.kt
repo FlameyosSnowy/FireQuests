@@ -1,6 +1,6 @@
 package me.flame.quests.api.quest.entity
 
-import me.flame.quests.api.quest.progress.QuestProgress
+import me.flame.quests.api.quest.progress.DefaultQuestProgress
 import java.util.UUID
 
 interface QuestPlayer {
@@ -8,7 +8,7 @@ interface QuestPlayer {
 
     val name: String
 
-    val progress: QuestProgress
+    val progress: DefaultQuestProgress
 
     val completedQuests: Set<UUID>
 }
