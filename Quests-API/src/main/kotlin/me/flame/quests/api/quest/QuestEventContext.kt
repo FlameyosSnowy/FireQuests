@@ -6,6 +6,6 @@ import me.flame.quests.api.quest.payload.QuestPayload
 @JvmRecord
 data class QuestEventContext(
     val player: QuestPlayer,
-    val entityType: QuestKey,
+    val questKey: QuestKey,
     val payload: QuestPayload
 )
