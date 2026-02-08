@@ -65,7 +65,7 @@ class QuestManager(
 
     fun getQuest(id: String): Quest? = questCache[id]
 
-    fun getAllQuests(): Collection<Quest> = questCache.values
+    fun getAllQuests(): List<Quest> = listOf(*questCache.values.toTypedArray())
 
     suspend inline fun loadPlayer(playerId: UUID, name: String, crossinline loader: (UUID, String) -> QuestPlayer) {
         val existing = playerDatabase.findById(playerId).getOrNull()

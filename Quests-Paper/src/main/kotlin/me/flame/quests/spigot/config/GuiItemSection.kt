@@ -4,12 +4,11 @@ import io.github.mqzen.menus.misc.itembuilder.ComponentItemBuilder
 
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.CustomModelData
+
 import me.flame.quests.api.GuiItemSpec
 
 import me.flame.quests.spigot.hooks.parsePapi
 import me.flame.quests.spigot.minimessage.color
-
-import net.kyori.adventure.text.minimessage.MiniMessage
 
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
@@ -26,21 +25,6 @@ class GuiItemSection(
     val flags by stringList("flags")
     val customModelData by int("custom-model-data")
 
-    fun buildItemStack(player: Player): ItemStack {
-        val build = ComponentItemBuilder.modern(Material.valueOf(material))
-            .setDisplay(color(parsePapi(player, name)))
-            .setLore(lore.map { color(parsePapi(player, it)) })
-            .addFlags(*flags.map { ItemFlag.valueOf(it) }.toTypedArray())
-            .build()
-
-        val custom = CustomModelData.customModelData()
-            .addFloat(customModelData.toFloat())
-            .build()
-
-        build.setData(DataComponentTypes.CUSTOM_MODEL_DATA, custom)
-        return build
-    }
-
     fun buildGuiItemSpec(): GuiItemSpec {
         return GuiItemSpec(
             material = material,
@@ -50,4 +34,22 @@ class GuiItemSection(
             customModelData = customModelData.takeIf { it > 0 }
         )
     }
+}
+
+@Suppress("UnstableApiUsage")
+fun buildItemStack(player: Player, guiItem: GuiItemSpec): ItemStack {
+    val build = ComponentItemBuilder.modern(Material.valueOf(guiItem.material))
+        .setDisplay(color(parsePapi(player, guiItem.name)))
+        .setLore(guiItem.lore.map { color(parsePapi(player, it)) })
+        .addFlags(*guiItem.flags.map { ItemFlag.valueOf(it) }.toTypedArray())
+        .build()
+
+    guiItem.customModelData?.let {
+        val custom = CustomModelData.customModelData()
+            .addFloat(it.toFloat())
+            .build()
+
+        build.setData(DataComponentTypes.CUSTOM_MODEL_DATA, custom)
+    }
+    return build
 }

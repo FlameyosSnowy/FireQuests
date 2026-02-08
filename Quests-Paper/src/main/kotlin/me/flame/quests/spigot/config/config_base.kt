@@ -1,21 +1,20 @@
+@file:Suppress("unused")
+
 package me.flame.quests.spigot.config
 
 import hazae41.minecraft.kutils.bukkit.BukkitConfiguration
-import hazae41.minecraft.kutils.bukkit.keys
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import java.io.File
 import kotlin.reflect.KProperty
 
+@Suppress("ClassName")
 abstract class Config {
 
     /** Always assumed to be already loaded */
     abstract val config: ConfigurationSection
 
     open var autoSave: Boolean = true
-
-    open val sections: List<ConfigurationSection>
-        get() = config.keys.map { config.getConfigurationSection(it)!! }
 
     operator fun contains(key: String): Boolean =
         config.contains(key)
