@@ -1,9 +1,11 @@
 plugins {
-    kotlin("jvm") version "1.9.10" apply false
+    kotlin("jvm") version "2.3.0" apply false
     id("com.gradleup.shadow") version "8.3.1" apply false
+    // shadowjar
+    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
 }
 
-group = "me.flame.trialfordevroom"
+group = "me.flame.quests"
 version = "1.0.0"
 
 subprojects {
